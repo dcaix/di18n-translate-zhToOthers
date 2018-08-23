@@ -1,10 +1,9 @@
 /*
  * 该文件用于提供页面的自动翻译功能
  * */
-
+// 用于收集
 
 var SwitchLanguage = function (props) {
-  // 用于收集语料资源
   var localResources = {}
   // 可以使用的标签
   var class_attribute = 'i18n-class';
@@ -13,28 +12,26 @@ var SwitchLanguage = function (props) {
   var placeholder_attribute = 'i18n-placeholder';
   var title_attribute = 'i18n-title';
 
-  // 国际化对象
   this.di18n = {}
-  // 执行语言
-  this.language = props?props.language:'' || 'zh'
-  // 是否开发状态，控制台打开需要添加的语料资源
+  this.language = props?props.language:'' || (localStorage.getItem("language")===('null'||null)?'': localStorage.getItem("language"))||'zh'
+  localStorage.setItem('language',this.language);
   this.dev = props?props.dev:'' || false
-  // 当前页面路径
   this.pages = window.location.pathname;
 
   // 进行侦测的标签
   this.tags = ['span', 'li', 'a', 'th', 'p'];
   // 进行检测，需要替换的class里的内容
-  this.classContent = ['greenBtn']
+  this.classContent = ['greenBtn','progress_nodetext','staffTitle',]
   // 需要替换的clasName的class
-  this.className = ['bChange']
+  this.className = ['bChange','uploadBtn','backgreenBtn']
 
   // 内容匹配的正则
-  this.reg = /^(\s|(&nbsp;))*(?![^\u4e00-\u9fa5]+$)(&gt;)?([()\w\s\u4e00-\u9fa5]|(&nbsp;))+(\s|(&nbsp;))*(:|：)?(\s|(&nbsp;))*$/;
+  var placeholder_attribute = 'i18n-placeholder';
+  this.reg = /^(\s|(&nbsp;))*(?![^\u4e00-\u9fa5]+$)(&gt;)?([()（）\w\s\u4e00-\u9fa5]|(&nbsp;))+(\s|(&nbsp;))*(:|：|!|！)?(\s|(&nbsp;))*$/;
   this.init = function () {
     if (!this.resource) {
       return false
-    };
+    }
     this.content();
     this.img();
     this.title();
@@ -49,6 +46,7 @@ var SwitchLanguage = function (props) {
       isReplace: true, // 是否开启运行时功能(适用于没有使用任何构建工具开发流程)
       messages: this.resource // 语言映射表  
     })
+
     return true
   }
   this.isHave = function (resource, language, innerHTML) {
@@ -68,7 +66,7 @@ var SwitchLanguage = function (props) {
       commonAjaxErr,pagesAjaxErr;
     // 调取公用语言资源
     $.ajax({
-      url: './commonResource.json',
+      url: '/js/commonResource.json',
       async: false,
       success: function (data) {
           if(typeof data === 'string'){
@@ -83,7 +81,7 @@ var SwitchLanguage = function (props) {
     })
     // 调取该页面json文件
     $.ajax({
-      url: pages.replace('.html', '.json'),
+      url: pages.replace(/(\.jsp)|(\.html)/, '.json'),
       async: false,
       success: function (data) {
           if(typeof data === 'string'){
@@ -109,6 +107,9 @@ var SwitchLanguage = function (props) {
           })
         }
       }
+   
+
+
     } else {
       langResource = false
     }
@@ -146,8 +147,6 @@ var SwitchLanguage = function (props) {
   this.placeholder = function () {
     var _this = this
     $("[placeholder]").each(function () {
-      console.log('lllll');
-      
       if ($(this).attr('placeholder').replace(/[\s\/]/g, '_').match(_this.reg) !== null) {
 
         // 仅添加资源路库没有的资源
@@ -217,9 +216,7 @@ var SwitchLanguage = function (props) {
  this.setLocale = function(language,fn){
      this.language = language
      this.init()
-     this.di18n.setLocale(language,function(){
         fn?fn():''
-  })
  }
  this.$html = function(html){
 
@@ -227,4 +224,4 @@ return   this.di18n.$html(html)
  } 
 }
 var di18n;
-// var di18n = new SwitchLanguage({language:'zh',dev:true}) 或 new SwitchLanguage()
+// var di18n = new SwitchLanguage({language:'zh',dev:true})

@@ -44,38 +44,38 @@
     <div class="box-wrapper">这里会动态添加演示元素
     </div>
   
-  <script src="./jquery.min.js"></script>
-  <script src="./di18n.min.js"></script>
-  <script src="./di18n_inspect.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/di18n.min.js"></script>
+  <script src="/js/di18n_inspect.js"></script>
   <script>
    
 // 动态添加语言切换按钮
 $(function(){
-  s = new SwitchLanguage({language:'en',dev:true})
-      s.init()
+  di18n = new SwitchLanguage({language:'en',dev:true})
+  di18n.init()
 
   $('#switchZh').click(function(){
-       s.setLocale('zh',function(){
-        s.init()
+    di18n.setLocale('zh',function(){
+       // 需要做的事情，第二个函数可不传
        }) 
     
     })
     $('#switchEn').click(function(){
-        s.setLocale('en',function(){
-          s.init()
+      di18n.setLocale('en',function(){
+           // 需要做的事情
         })
     })
   
 
 })
 
-    var s;
+    var di18n;
     $('.live1').on('click',function(){
       $('.box-wrapper').html('<span>加</span>（直接写死的且动态添加的，未执行init，不翻译。）')
 
     })
     $('.live2').on('click',function(){
-      $('.box-wrapper').html(s.$html('<span>$t("你好")</span> (内置$html添加的，可按语境给出正确的语言)'))
+      $('.box-wrapper').html(di18n.$html('<span>$t("你好")</span> (内置$html添加的，可按语境给出正确的语言)'))
     })
   </script>
 </body>
