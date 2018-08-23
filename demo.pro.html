@@ -1,0 +1,83 @@
+<!-- 适用项目场景（老旧项目新引国际化） -->
+<!-- 1 没有使用任何构建工具开发流程 -->
+<!-- 2 项目已全局上线，全中文 -->
+<!-- 3 业务量大或受限于历史组件，不方便全局改页面，标签上添加di18n标识符  -->
+
+<!-- 那么 -->
+
+<!-- 我们可以在页面渲染完成后，合适的时间调用 对象方法 ,匹配到符合翻译的标签进行动态添加di18n标识，再执行di18n翻译 -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ <!-- di18n.min.js里一些语法，需要适当修改和引兼容包 兼容ie8及以下-->
+  <!--[if gte IE 8]>
+      <script type="text/javascript" src="https://cdn.bootcss.com/es5-shim/4.5.10/es5-shim.min.js"></script> 
+       <script type="text/javascript" src="https://cdn.bootcss.com/es5-shim/4.5.10/es5-sham.min.js"></script>
+  <![endif]-->
+  <style>
+      .bChange_en{
+      color: hotpink;
+    }
+    </style>
+</head>
+
+<body>
+  <button id="switchZh"><span>中文</span></button>
+  <button  id="switchEn"><span>英文</span></button>
+    <h1 class="bChange">This is i18n-class</h1>
+    <h2 ><span>设置密码</span></h2>
+    <input type="text" placeholder="确定">
+    <br/>
+    <p >记住密码</p>
+    <p>你好</p>
+    <img alt="img" class="i18n_img" src="./favicon_zh.png" width="30" height="30">
+    <button class="greenBtn">绿按钮</button>
+    <button class="greenBtn">按钮</button>
+   
+    <button class="live1">点我1</button>
+    <button class="live2"><span>点我</span>2</button>
+    <div class="box-wrapper">这里会动态添加演示元素
+    </div>
+  
+  <script src="./jquery.min.js"></script>
+  <script src="./di18n.min.js"></script>
+  <script src="./di18n_inspect.js"></script>
+  <script>
+   
+// 动态添加语言切换按钮
+$(function(){
+  s = new SwitchLanguage({language:'en',dev:true})
+      s.init()
+
+  $('#switchZh').click(function(){
+       s.setLocale('zh',function(){
+        s.init()
+       }) 
+    
+    })
+    $('#switchEn').click(function(){
+        s.setLocale('en',function(){
+          s.init()
+        })
+    })
+  
+
+})
+
+    var s;
+    $('.live1').on('click',function(){
+      $('.box-wrapper').html('<span>加</span>（直接写死的且动态添加的，未执行init，不翻译。）')
+
+    })
+    $('.live2').on('click',function(){
+      $('.box-wrapper').html(s.$html('<span>$t("你好")</span> (内置$html添加的，可按语境给出正确的语言)'))
+    })
+  </script>
+</body>
+
+</html>
