@@ -10,7 +10,6 @@ var SwitchLanguage = function (props) {
   var img_attribute = 'i18n-img';
   var content_attribute = 'i18n-content';
   var placeholder_attribute = 'i18n-placeholder';
-  var title_attribute = 'i18n-title';
 
   this.di18n = {}
   this.language = props?props.language:'' || (localStorage.getItem("language")===('null'||null)?'': localStorage.getItem("language"))||'zh'
@@ -34,10 +33,8 @@ var SwitchLanguage = function (props) {
     }
     this.content();
     this.img();
-    this.title();
     this.placeholder();
     this.iclass();
-
     if (this.dev) {
       console.log('还需要添加的资源：', JSON.stringify(localResources));
     }
@@ -46,9 +43,9 @@ var SwitchLanguage = function (props) {
       isReplace: true, // 是否开启运行时功能(适用于没有使用任何构建工具开发流程)
       messages: this.resource // 语言映射表  
     })
-
-    return true
+    return this
   }
+
   this.isHave = function (resource, language, innerHTML) {
     var flag = false  
     $.each(resource[language], function (i, data) {
@@ -97,15 +94,15 @@ var SwitchLanguage = function (props) {
 
     if (!commonAjaxErr) {
       // 合并公用和当前page资源 
-      langResource = JSON.parse(JSON.stringify(commonResource))
+      langResource = commonResource
       if(!pagesAjaxErr){
-        if (pageResource && pageResource[this.language]) {
           $.each(langResource, function (language, lSourse) {
+          if(pageResource[language]){
             $.each(pageResource[language], function (index, data) {
               langResource[language][index] = data
             })
+          }
           })
-        }
       }
    
 
@@ -198,30 +195,20 @@ var SwitchLanguage = function (props) {
       $(this).attr(img_attribute, enSrc);
     })
   }
-  this.title = function () {
-    var _this = this
-    $("[title]").each(function () {
-      if ($(this).attr('title').match(_this.reg) !== null) {
-
-        // 仅添加资源路库没有的资源
-        if (!_this.isHave(_this.resource, _this.language, $(this).attr('title')) && _this.dev) {
-          console.log(" => 已匹配到的汉字:" + $(this).attr('title'));
-          if (!localResources[_this.language]) localResources[_this.language] = {}
-          localResources[language][$(this).attr('title')] = $(this).attr('title')
-        }
-        $(this).attr(title_attribute, $(this).attr('title'));
-      }
-    })
-  }
  this.setLocale = function(language,fn){
      this.language = language
-     this.init()
-        fn?fn():''
+     if(this.init()){
+      localStorage.setItem('language',language)
+     }else{
+      return
+     }
+      fn?fn(this):''
+    return this
  }
  this.$html = function(html){
 
 return   this.di18n.$html(html)
  } 
 }
-var di18n;
-// var di18n = new SwitchLanguage({language:'zh',dev:true})
+
+var di18n = new SwitchLanguage()

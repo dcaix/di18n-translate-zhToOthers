@@ -9,7 +9,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <title></title>
   <meta charset="UTF-8">
@@ -51,9 +50,7 @@
    
 // 动态添加语言切换按钮
 $(function(){
-  di18n = new SwitchLanguage({language:'en',dev:true})
-  di18n.init()
-
+  di18n.init().dev = true
   $('#switchZh').click(function(){
     di18n.setLocale('zh',function(){
        // 需要做的事情，第二个函数可不传
@@ -61,9 +58,7 @@ $(function(){
     
     })
     $('#switchEn').click(function(){
-      di18n.setLocale('en',function(){
-           // 需要做的事情
-        })
+      di18n.setLocale('en')
     })
   
 
